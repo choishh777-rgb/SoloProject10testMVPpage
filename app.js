@@ -350,7 +350,7 @@ $('#kakaoBtn').onclick = () => {
     content: {
       title: `나의 SOLO TYPE, ${type}`,
       description: r ? r.share : 'SOLO PROJECT 연애 유형 테스트',
-      imageUrl: `${location.origin}/share-card.png?v=2`,
+      imageUrl: `${location.origin}/share-card-square.png?v=1`,
       link: { mobileWebUrl: makeShareUrl(type), webUrl: makeShareUrl(type) }
     },
     buttons: [{ title: '나도 테스트하기', link: { mobileWebUrl: makeShareUrl(type), webUrl: makeShareUrl(type) } }]
