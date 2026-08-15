@@ -112,9 +112,12 @@
           </div>
         </div>
 
-        <div class="actions">
-          <button class="btn-share" id="shareBtn">결과 공유하기</button>
-          <button class="btn-copy" id="copyBtn">링크 복사</button>
+        <div class="share-grid">
+          <button class="chan-btn" id="kakaoBtn"><span class="chan-badge chan-kakao">톡</span>카카오톡</button>
+          <button class="chan-btn" id="instaBtn"><span class="chan-badge chan-insta">IG</span>인스타그램</button>
+          <button class="chan-btn" id="threadsBtn"><span class="chan-badge chan-threads">@</span>스레드</button>
+          <button class="chan-btn" id="bandBtn"><span class="chan-badge chan-band">밴드</span>밴드</button>
+          <button class="chan-btn" id="copyBtn"><span class="chan-badge chan-copy">🔗</span>링크 복사</button>
         </div>
         <button class="ghost-wide" id="restartBtn">다시 테스트하기</button>
 
@@ -127,6 +130,7 @@
     </section>
 
   </main>
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.4/kakao.min.js" crossorigin="anonymous"></script>
   <script src="app.js"></script>
 </body>
 </html>

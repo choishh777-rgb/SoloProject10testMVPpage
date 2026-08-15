@@ -1,5 +1,6 @@
 const DATA_ENDPOINT = ""; // Apps Script 웹앱 URL을 넣으면 응답/이벤트가 Google Sheets로 전송됩니다.
 const GA_MEASUREMENT_ID = ""; // GA4 데이터 스트림의 측정 ID(G-XXXXXXXXXX)를 넣으면 GA4로도 이벤트가 전송됩니다.
+const KAKAO_JS_KEY = "aa52d45f67fe34ca4ae8fc7df6663e2d"; // 카카오 개발자센터(developers.kakao.com)에서 발급받은 JavaScript 키를 넣으면 카카오톡 공유가 작동합니다.
 
 const ATTRIBUTION_KEYS = [
   'utm_source','utm_medium','utm_campaign','utm_content','utm_term',
@@ -57,6 +58,11 @@ function initGA(){
   document.head.appendChild(script);
 }
 
+function initKakao(){
+  if (!KAKAO_JS_KEY || typeof Kakao === 'undefined') return;
+  if (!Kakao.isInitialized()) Kakao.init(KAKAO_JS_KEY);
+}
+
 async function sendToSheet(payload){
   if (!DATA_ENDPOINT) return;
   try {
@@ -98,6 +104,7 @@ function makeShareUrl(resultName = ''){
 }
 
 initGA();
+initKakao();
 getAttribution();
 trackEvent('landing_view', { screen: 'landing' });
 
@@ -315,24 +322,63 @@ async function saveResponse(payload){
 $('#startBtn').onclick = () => { trackEvent('test_start', { screen: 'landing' }); idx = 0; answers.length = 0; show('#quiz'); render(); };
 $('#backBtn').onclick = () => { trackEvent('quiz_back_click', { question_number: idx + 1 }); if (idx === 0) show('#landing'); else { idx--; render(); } };
 $('#restartBtn').onclick = () => { trackEvent('retry_click', {}); idx = 0; answers.length = 0; show('#landing'); };
-$('#copyBtn').onclick = async () => {
-  trackEvent('copy_link_click', { result: $('#resultType').textContent });
-  await navigator.clipboard.writeText(makeShareUrl($('#resultType').textContent));
-  alert('링크를 복사했어요!');
-};
-$('#shareBtn').onclick = async () => {
-  const type = $('#resultType').textContent;
-  trackEvent('share_click', { result: type });
+function buildShareText(type){
   const shareUrl = makeShareUrl(type);
   const text = `나는 ${type} 나왔어ㅋㅋ 너는 뭐 나오는지 해봐 👇\n${shareUrl}`;
-  if (navigator.share) {
-    try {
-      await navigator.share({ title: 'SOLO PROJECT 연애 유형 테스트', text, url: shareUrl });
-      trackEvent('share_success', { result: type, method: 'native' });
-      return;
-    } catch (e) { trackEvent('share_cancel', { result: type }); return; }
-  }
+  return { shareUrl, text };
+}
+
+$('#copyBtn').onclick = async () => {
+  const type = $('#resultType').textContent;
+  trackEvent('copy_link_click', { result: type });
+  const { text } = buildShareText(type);
   await navigator.clipboard.writeText(text);
-  trackEvent('share_success', { result: type, method: 'clipboard' });
   alert('공유 문구를 복사했어요!');
+};
+
+$('#kakaoBtn').onclick = () => {
+  const type = $('#resultType').textContent;
+  const r = results[`${$('#xLabel').textContent}|${$('#yLabel').textContent}`];
+  trackEvent('share_click', { result: type, method: 'kakao' });
+  if (typeof Kakao === 'undefined' || !Kakao.isInitialized || !Kakao.isInitialized()) {
+    alert('카카오톡 공유는 아직 설정 중이에요. 대신 링크를 복사해드릴게요!');
+    $('#copyBtn').click();
+    return;
+  }
+  Kakao.Share.sendDefault({
+    objectType: 'feed',
+    content: {
+      title: `나의 SOLO TYPE, ${type}`,
+      description: r ? r.share : 'SOLO PROJECT 연애 유형 테스트',
+      imageUrl: `${location.origin}/share-card.png`,
+      link: { mobileWebUrl: makeShareUrl(type), webUrl: makeShareUrl(type) }
+    },
+    buttons: [{ title: '나도 테스트하기', link: { mobileWebUrl: makeShareUrl(type), webUrl: makeShareUrl(type) } }]
+  });
+  trackEvent('share_success', { result: type, method: 'kakao' });
+};
+
+$('#threadsBtn').onclick = () => {
+  const type = $('#resultType').textContent;
+  trackEvent('share_click', { result: type, method: 'threads' });
+  const { text } = buildShareText(type);
+  window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
+  trackEvent('share_success', { result: type, method: 'threads' });
+};
+
+$('#bandBtn').onclick = () => {
+  const type = $('#resultType').textContent;
+  trackEvent('share_click', { result: type, method: 'band' });
+  const { text } = buildShareText(type);
+  window.open(`https://band.us/plugin/share?body=${encodeURIComponent(text)}&route=${encodeURIComponent(location.hostname)}`, 'share_band', 'width=480,height=560');
+  trackEvent('share_success', { result: type, method: 'band' });
+};
+
+$('#instaBtn').onclick = async () => {
+  const type = $('#resultType').textContent;
+  trackEvent('share_click', { result: type, method: 'instagram' });
+  const { text } = buildShareText(type);
+  await navigator.clipboard.writeText(text);
+  alert('인스타그램은 앱에서만 링크 공유가 가능해요.\n문구를 복사했으니 스토리나 DM에 붙여넣어주세요!');
+  trackEvent('share_success', { result: type, method: 'instagram_clipboard' });
 };
