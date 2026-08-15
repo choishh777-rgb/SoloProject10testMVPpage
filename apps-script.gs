@@ -11,7 +11,7 @@
  * 5) 배포 > 새 배포 > 웹 앱 > 실행 사용자: 나 / 액세스: 모든 사용자
  * 6) 배포 URL을 app.js의 DATA_ENDPOINT에 입력
  */
-const SHEET_ID = '여기에_구글시트_ID';
+const SHEET_ID = '8PmcVkjrxw477XvaagCYt9IByDUH5bhtW1V2leLyqDo';
 const EVENT_SHEET = 'events';
 const RESPONSE_SHEET = 'responses';
 

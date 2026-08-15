@@ -1,5 +1,5 @@
-const DATA_ENDPOINT = ""; // Apps Script 웹앱 URL을 넣으면 응답/이벤트가 Google Sheets로 전송됩니다.
-const GA_MEASUREMENT_ID = ""; // GA4 데이터 스트림의 측정 ID(G-XXXXXXXXXX)를 넣으면 GA4로도 이벤트가 전송됩니다.
+const DATA_ENDPOINT = "https://script.google.com/macros/s/AKfycby0vxz2lCk1Z7itQPzkSlGW-pbftIz_q44WF1cfVGmPiDDyBHyLdmcnTy5nLJ55CQVCYQ/exec"; // Apps Script 웹앱 URL을 넣으면 응답/이벤트가 Google Sheets로 전송됩니다.
+const GA_MEASUREMENT_ID = "G-LTLEM0C7SP"; // GA4 데이터 스트림의 측정 ID(G-XXXXXXXXXX)를 넣으면 GA4로도 이벤트가 전송됩니다.
 const KAKAO_JS_KEY = "aa52d45f67fe34ca4ae8fc7df6663e2d"; // 카카오 개발자센터(developers.kakao.com)에서 발급받은 JavaScript 키를 넣으면 카카오톡 공유가 작동합니다.
 
 const ATTRIBUTION_KEYS = [
